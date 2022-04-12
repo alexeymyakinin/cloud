@@ -1,0 +1,5 @@
+{
+  "UserController": {
+    "class": "./src/controller"
+  }
+}
