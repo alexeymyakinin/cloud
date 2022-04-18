@@ -1,27 +1,7 @@
-export declare interface IUserService<T> {
-    createUser(): Promise<T | null>;
+import { AbstractService } from './AbstractService';
 
-    updateUser(): Promise<T | null>;
+import { User } from '../models/user';
 
-    removeUser(): Promise<T | null>;
+class UserService extends AbstractService<typeof User> {}
 
-    selectUser(): Promise<T | null>;
-}
-
-export class UserService implements IUserService<object> {
-    async createUser(): Promise<object | null> {
-        return Promise.resolve(null);
-    }
-
-    async removeUser(): Promise<object | null> {
-        return Promise.resolve(null);
-    }
-
-    async selectUser(): Promise<object | null> {
-        return Promise.resolve(null);
-    }
-
-    async updateUser(): Promise<object | null> {
-        return Promise.resolve(null);
-    }
-}
+export default new UserService(User);
