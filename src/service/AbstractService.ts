@@ -1,7 +1,8 @@
+import { Optional } from "sequelize";
 import { FindOptions, ModelStatic } from "sequelize/types/model";
 import { Logger } from "winston";
+
 import { getLogger } from "../logger";
-import { Optional } from "sequelize";
 
 export class AbstractService<T extends ModelStatic<any>> {
     protected log: Logger;
@@ -22,7 +23,7 @@ export class AbstractService<T extends ModelStatic<any>> {
         return await this.model.create(data);
     }
 
-    async update(id: number, data: never): Promise<any> {
+    async update(id: number, data: object): Promise<any> {
         return await this.model.update(data, {
             where: { id: id },
             returning: true,

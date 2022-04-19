@@ -1,37 +1,67 @@
-import express, { Request, Response } from "express";
+import { Context } from "koa";
+import koaBody from "koa-body";
+import Router from "koa-router";
+
 import { User } from "../models/user";
 import { UserService } from "../service/UserService";
 
 const userService = new UserService(User);
-const listUsers = async (request: Request, response: Response) => {
+const listUsers = async (ctx: Context) => {
     await userService.select({});
     await User.findAll()
-        .then((res) => response.status(200).send(res))
-        .catch((error) => response.status(500).send(error));
+        .then((res) => {
+            ctx.body = res;
+            ctx.status = 200;
+        })
+        .catch((err) => {
+            ctx.body = err;
+            ctx.status = 500;
+        });
 };
 
-const fetchUser = async (request: Request, response: Response) => {
-    const id = request.params.userId;
-    await User.findByPk(id)
-        .then((res) => response.status(200).send(res))
-        .catch((error) => response.status(500).send(error));
+const fetchUser = async (ctx: Context) => {
+    const id = Number(ctx.query.id);
+    await userService
+        .retrieve(id)
+        .then((res) => {
+            ctx.body = res;
+            ctx.status = 200;
+        })
+        .catch((err) => {
+            ctx.body = err;
+            ctx.status = 500;
+        });
 };
 
-const createUser = async (request: Request, response: Response) => {
-    await User.create(request.body)
-        .then((res) => res.get())
-        .then((res) => response.status(201).send(res))
-        .catch((err) => response.status(500).send(err));
+const createUser = async (ctx: Context) => {
+    await userService
+        .create(ctx.request.body)
+        .then((res) => {
+            ctx.body = res;
+            ctx.status = 200;
+        })
+        .catch((err) => {
+            ctx.body = err;
+            ctx.status = 500;
+        });
 };
 
-const updateUser = async (request: Request, response: Response) => {
-    response.status(200).send();
+const updateUser = async (ctx: Context) => {
+    await userService
+        .update(Number(ctx.query.id), ctx.request.body)
+        .then((res) => {
+            ctx.body = res;
+            ctx.status = 200;
+        })
+        .catch((err) => {
+            ctx.body = err;
+            ctx.status = 500;
+        });
 };
 
-const userRouter = express
-    .Router()
-    .use(express.json())
-    .get("/api/user/:userId", fetchUser)
+const userRouter = new Router()
+    .use(koaBody())
+    .get("/api/user/:id", fetchUser)
     .get("/api/user", listUsers)
     .post("/api/user", createUser)
     .patch("/api/user", updateUser);

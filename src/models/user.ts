@@ -1,8 +1,9 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../database';
+import { DataTypes } from "sequelize";
+
+import { sequelize } from "../database";
 
 export const User = sequelize.define(
-    'User',
+    "User",
     {
         birthday: {
             type: DataTypes.STRING,
@@ -41,17 +42,17 @@ export const User = sequelize.define(
     },
     {
         paranoid: true,
-        tableName: 'user',
+        tableName: "user",
         underscored: true,
         freezeTableName: true,
         indexes: [
             {
                 unique: true,
-                fields: ['username'],
+                fields: ["username"],
             },
             {
                 unique: true,
-                fields: ['email'],
+                fields: ["email"],
             },
         ],
     },

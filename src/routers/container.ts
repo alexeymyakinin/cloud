@@ -1,14 +1,18 @@
-import express, { Request, Response } from "express";
-import { ContainerService } from "../service/ContainerService";
+import { Context } from "koa";
+import Router from "koa-router";
+
 import { Container } from "../models/container";
+import { ContainerService } from "../service/ContainerService";
 
 const containerService = new ContainerService(Container);
-const listContainers = async (request: Request, response: Response) => {
-    await containerService
-        .listContainers({})
-        .then((res) => response.status(200).send(res));
+const listContainers = async (ctx: Context) => {
+    await containerService.listContainers({}).then((res) => {
+        ctx.body = res;
+        ctx.status = 200;
+    });
 };
 
-export const containerRouter = express
-    .Router()
-    .get("/api/container", listContainers);
+export const containerRouter = new Router().get(
+    "/api/container",
+    listContainers,
+);
