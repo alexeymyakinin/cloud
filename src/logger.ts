@@ -1,25 +1,29 @@
-import winston, { Logger } from 'winston';
+import winston, { Logger } from "winston";
 
-const loggers = new Map<string, Logger>();
+const memoizedLogger = () => {
+    const cached = new Map();
 
-export const getLogger = (label: string, level: string = 'INFO'): Logger => {
-    if (!loggers.has(label)) {
-        loggers.set(
-            label,
-            winston.createLogger({
-                level: level.toLowerCase(),
-                format: winston.format.combine(
-                    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-                    winston.format.label({ label }),
-                    winston.format.errors(),
-                    winston.format.splat(),
-                    winston.format.json(),
-                ),
-                transports: [new winston.transports.Console()],
-            }),
-        );
-    }
+    return (name: string): Logger => {
+        if (cached.has(name)) {
+            return cached.get(name);
+        }
 
-    // @ts-ignore
-    return loggers.get(label);
+        const logger = winston.createLogger({
+            level: "info",
+            format: winston.format.combine(
+                winston.format.timestamp({
+                    format: "YYYY-MM-DD HH:mm:ss",
+                }),
+                winston.format.label({ label: name }),
+                winston.format.errors(),
+                winston.format.splat(),
+                winston.format.json(),
+            ),
+            transports: [new winston.transports.Console()],
+        });
+        cached.set(name, logger);
+        return logger;
+    };
 };
+
+export const getLogger = memoizedLogger();

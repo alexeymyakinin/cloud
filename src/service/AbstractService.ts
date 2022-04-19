@@ -1,7 +1,14 @@
-import { FindOptions, ModelStatic } from 'sequelize/types/model';
+import { FindOptions, ModelStatic } from "sequelize/types/model";
+import { Logger } from "winston";
+import { getLogger } from "../logger";
+import { Optional } from "sequelize";
 
 export class AbstractService<T extends ModelStatic<any>> {
-    constructor(protected model: T) {}
+    protected log: Logger;
+
+    constructor(protected model: T) {
+        this.log = getLogger(this.constructor.name);
+    }
 
     async retrieve(id: number): Promise<T> {
         return await this.model.findByPk(id);
@@ -11,11 +18,11 @@ export class AbstractService<T extends ModelStatic<any>> {
         return await this.model.findAll(options);
     }
 
-    async create(data: any): Promise<T> {
+    async create(data: Optional<never, string>): Promise<T> {
         return await this.model.create(data);
     }
 
-    async update(id: number, data: any): Promise<any> {
+    async update(id: number, data: never): Promise<any> {
         return await this.model.update(data, {
             where: { id: id },
             returning: true,

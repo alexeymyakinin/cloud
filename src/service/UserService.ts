@@ -1,7 +1,5 @@
-import { AbstractService } from './AbstractService';
+import { AbstractService } from "./AbstractService";
 
-import { User } from '../models/user';
+import { User } from "../models/user";
 
-class UserService extends AbstractService<typeof User> {}
-
-export default new UserService(User);
+export class UserService extends AbstractService<typeof User> {}
